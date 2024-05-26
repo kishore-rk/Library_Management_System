@@ -19,7 +19,6 @@ public class LoginInfo {
             System.out.println("Connected to the database");
             try {
                 Statement statement = connection.createStatement();
-                System.out.println("SELECT * FROM users WHERE username = '"+username+"' AND password = '"+password+"'");
                 ResultSet resultSet = statement.executeQuery("SELECT * FROM users WHERE username = '"+username+"' AND password = '"+password+"'");
                 if(resultSet.next()) {
                     return resultSet.getInt(1);

@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 public class Admin extends JFrame implements ActionListener{
     public JTextField isbnField, titleField, authorField, languageField, genreField, copiesField;
@@ -20,7 +21,7 @@ public class Admin extends JFrame implements ActionListener{
 
     public Admin() {
         
-        // UIManager.put("Label.foreground", Color.BLACK);
+         UIManager.put("Label.foreground", Color.WHITE);
         isbnLabel = new JLabel("ISBN");
         isbnField = new JTextField();
         isbnLabel.setBounds(50, 50, 100, 25);
@@ -73,7 +74,7 @@ public class Admin extends JFrame implements ActionListener{
         this.setLayout(new GridLayout(7, 2));
         this.add(isbnLabel);
         this.add(isbnField);
-        this.setTitle("Admin");
+        this.setTitle("Add Book");
         
         this.getContentPane().setBackground(Color.BLACK);
         this.setLayout(null);
@@ -90,12 +91,17 @@ public class Admin extends JFrame implements ActionListener{
             try {
                 connection = Connections.getConnection();
                 if (connection != null) {
-                    System.out.println("Connected to the database for adding books");
                     String isbn = isbnField.getText();
                     String title = titleField.getText();
                     String author = authorField.getText();
                     String language = languageField.getText();
                     String genre = genreField.getText();
+                    try {
+                        Integer.parseInt(copiesField.getText());
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(this, "Copies must be a number");
+                        return;
+                    }
                     int copies = Integer.parseInt(copiesField.getText());
         
                     if (isbn.isEmpty() || title.isEmpty() || author.isEmpty() || language.isEmpty() || genre.isEmpty() || copiesField.getText().isEmpty()) {
@@ -132,6 +138,14 @@ public class Admin extends JFrame implements ActionListener{
                     statement.setInt(7, copies);
                     statement.executeUpdate();
                     JOptionPane.showMessageDialog(this, "Book added successfully!");
+                    isbnField.setText("");
+                    titleField.setText("");
+                    authorField.setText("");
+                    languageField.setText("");
+                    genreField.setText("");
+                    copiesField.setText("");
+
+
                 } else {
                     System.out.println("Failed to connect to the database");
                 }
@@ -156,8 +170,5 @@ public class Admin extends JFrame implements ActionListener{
             }
         }
         
-    }
-    public static void main(String[] args) {
-        new Admin();
     }
 }

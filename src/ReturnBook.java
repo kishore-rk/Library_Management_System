@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
@@ -15,17 +16,13 @@ public class ReturnBook extends ViewBorrowedBooks{
     public JTextField isbnField;  
     Connection connection;
     Statement statement;  
-    int id;
     public ReturnBook(int id) throws SQLException {
-        super(id); 
+       super(id);
     
-        this.id = id; // Explicitly invoke the constructor of the superclass
         
-        this.id = id;
         connection = Connections.getConnection();
         UIManager.put("Label.foreground", Color.BLACK);
         if( connection != null) {
-            System.out.println("Connected to the database");
             
             isbnLabel = new JLabel("ISBN");
             isbnField = new JTextField();
@@ -33,20 +30,23 @@ public class ReturnBook extends ViewBorrowedBooks{
             isbnField.setBounds(150, 350, 200, 25);
             this.add(isbnLabel);
             this.add(isbnField);
-            JButton submitButton = new JButton("Return Book");
+            JButton submitButton = new JButton("Return");
             submitButton.setBounds(150, 400, 100, 30);
             submitButton.addActionListener(e -> {
-                String query = "SELECT * FROM books WHERE id= ?";
-                new Check_Availability(id).chk(isbnField.getText(), query, -1);
                 try {
-                    fetchBooks.fetchBooksList(tableModel, "SELECT * FROM books");
+                    new CheckAvailability(id).chk(isbnField.getText(), 1, "SELECT * FROM issued_books WHERE b_id = ? and user_id = "+id);
+                    fetchBooks.fetchBooksList(tableModel, "SELECT * FROM books WHERE id IN (SELECT b_id FROM issued_books WHERE user_id = " + id + ")",0);
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
+                
 
             });
+            this.setTitle("Return Book");
             this.add(submitButton);
             
+        } else {        
+            JOptionPane.showMessageDialog(null, "Failed to connect to the database");
+        }
     }
-
-}}
+}

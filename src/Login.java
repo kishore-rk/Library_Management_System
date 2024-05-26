@@ -28,7 +28,6 @@ public class Login extends JFrame implements ActionListener {
 
         // Label "Library Management System"
         JLabel label = new JLabel("Library Management System");
-        System.out.println(label.getPreferredSize().width);
         label.setBounds((500 - label.getPreferredSize().width) / 2-30, 30, 300, 25);
         this.add(label);
 
@@ -82,8 +81,7 @@ public class Login extends JFrame implements ActionListener {
             LoginInfo login1 = new LoginInfo( username.getText(), new String(password.getPassword()));
             int id = login1.connectToDatabase();
             if( id != -1){
-                System.out.println("Login successful");
-                
+                System.out.println("Login successful");               
                 JOptionPane.showMessageDialog(null, "Login successful");
                 this.dispose();
                 new Library( id );  
